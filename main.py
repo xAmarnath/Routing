@@ -165,4 +165,4 @@ app.router.add_get("/", index)
 import os
 PORT = os.environ.get('PORT', 8080)
 
-web.run_app(app, port=PORT)
+web.run_app(app, port=int(PORT))
