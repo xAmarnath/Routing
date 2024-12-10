@@ -1,10 +1,13 @@
 from aiohttp import ClientSession, ClientTimeout
 from urllib.parse import quote_plus
 from utils import clean_html_instructions, decode_google_maps_polyline
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # from aiohttp_sse import sse_response
 
-GOOGLE_API_KEY = "AIzaSyAjjIn17l-6uyNlZnjOEsZNnzoLGeIWCi0"
+GOOGLE_API_KEY = os.getenv("GMAPS_KEY") 
 
 
 async def find_routes(place1, place2):

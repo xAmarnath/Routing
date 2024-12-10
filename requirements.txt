@@ -1,1 +1,3 @@
 aiohttp
+python-dotenv
+bs4
