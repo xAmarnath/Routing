@@ -162,4 +162,7 @@ app.router.add_get("/commit", commit)
 app.router.add_get("/get_all_users", get_all_users)
 app.router.add_get("/", index)
 
-web.run_app(app, port=8080)
+import os
+PORT = os.environ.get('PORT', 8080)
+
+web.run_app(app, port=PORT)
