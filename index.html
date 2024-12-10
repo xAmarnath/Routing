@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>-</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="bg-gray-900 text-white font-sans">
+    <div>
+        <div class="z-10 mt-24 fixed top-0 left-0 p-4 bg-gray-900 bg-opacity-50">
+            <p class="text-lg">Route Deviated: <span class="text-red-500 font-bold text-lg" id="deviated">No</span></p>
+        </div>
+        <div id="map" class="h-screen"></div>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjjIn17l-6uyNlZnjOEsZNnzoLGeIWCi0"></script>
+    <script>
+        let map;
+        let currentUser = null;
+        let username = "1";
+
+        const sp = document.getElementById('deviated');
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 9.5209, lng: 76.3561 },
+                zoom: 8
+            });
+
+            fetch('/get_user?u=' + username)
+                .then(response => response.json())
+                .then(data => {
+                    let routePoints = data["route_points"];
+                    let route = [];
+                    for (let i = 0; i < routePoints.length; i++) {
+                        route.push({ lat: parseFloat(routePoints[i][0]), lng: parseFloat(routePoints[i][1]) });
+                    }
+                    route = route.filter((point, index, self) => index === self.findIndex((t) => (t.lat === point.lat && t.lng === point.lng)));
+                    console.log(route);
+
+                    let routePath = new google.maps.Polyline({ path: route, geodesic: true, strokeColor: '#FF0000', strokeOpacity: 1.0, strokeWeight: 2 });
+                    routePath.setMap(map);
+
+                    const carIcon = {
+                        url: 'https://envs.sh/1VF.png',
+                        scaledSize: new google.maps.Size(45, 70),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(15, 15),
+                    };
+
+                    let vehicle = new google.maps.Marker({ position: route[0], map: map, icon: carIcon });
+                    let i = 0;
+                    setInterval(() => {
+                        if (i < route.length) {
+                            vehicle.setPosition(route[i]);
+                            i++;
+                        }
+                    }, 1);
+                });
+
+            google.maps.event.addListener(map, 'click', function (event) {
+                fetch('/update_user_location?u=' + username + '&lat=' + event.latLng.lat() + '&lon=' + event.latLng.lng())
+                    .then(response => response.json())
+                    .then(data => {
+                        sp.innerText = data["alert"] ? "Yes" : "No";
+                        if (data["alert"]) {
+                            sp.classList.remove("text-red-500");
+                            sp.classList.add("text-green-500");
+                        } else {
+                            sp.classList.remove("text-green-500");
+                            sp.classList.add("text-red-500");
+                        }
+                    });
+            });
+        }
+
+        initMap();
+    </script>
+</body>
+
+</html>
