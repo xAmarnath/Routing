@@ -3,6 +3,7 @@ from routing import find_routes, search_place
 from location import (
     add_user,
     get_user,
+    get_u,
     is_user,
     _save_users,
     get_all_users_as_dict,
@@ -126,7 +127,7 @@ async def user_start_journey_handler(request):
         p2 = request.query["p2"]
     except KeyError:
         return web.json_response({"error": "Missing 'u', 'p1', or 'p2'"}, status=400)
-    user = get_user(username)
+    user = get_u(username)
     if user is None:
         return web.json_response({"error": "User not found"}, status=404)
     await user.start_journey(p1, p2)
