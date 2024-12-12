@@ -151,8 +151,53 @@ async def get_all_users(request):
         headers={"Access-Control-Allow-Origin": "*"},
     )
 
+
 async def index(request):
-    return web.FileResponse('index.html')
+    return web.FileResponse("index.html", headers={"Access-Control-Allow-Origin": "*"})
+
+
+rectangles = []
+
+
+async def add_rectangle(request):
+    global rectangles
+    try:
+        lat = request.query["lat"]
+        lon = request.query["lon"]
+        width = request.query["w"]
+        height = request.query["h"]
+    except KeyError:
+        return web.json_response(
+            {"error": "Missing 'lat', 'lon', 'w', or 'h'"}, status=400
+        )
+    rectangles.append((lat, lon, width, height))
+    rectangles = list(set(rectangles))
+    return web.json_response(
+        {"lat": lat, "lon": lon, "w": width, "h": height},
+        headers={"Access-Control-Allow-Origin": "*"},
+    )
+
+
+async def get_rectangles(request):
+    return web.json_response(rectangles)
+
+async def delete_rectangle(request):
+    try:
+        lat = request.query["lat"]
+        lon = request.query["lon"]
+    except KeyError:
+        return web.json_response(
+            {"error": "Missing 'lat', 'lon'"}, status=400
+        )
+    
+    for i in range(len(rectangles)):
+        if rectangles[i][0] == lat and rectangles[i][1] == lon:
+            rectangles.pop(i)
+            break
+
+app.router.add_get("/get_rectangles", get_rectangles)
+app.router.add_get("/delete_rectangle", delete_rectangle)
+app.router.add_get("/add_rectangle", add_rectangle)
 
 app.router.add_get("/add_user", add_user_handler)
 app.router.add_get("/update_user_location", update_user_location_handler)
@@ -164,6 +209,7 @@ app.router.add_get("/get_all_users", get_all_users)
 app.router.add_get("/", index)
 
 import os
-PORT = os.environ.get('PORT', 8080)
+
+PORT = os.environ.get("PORT", 8080)
 
 web.run_app(app, port=int(PORT))
