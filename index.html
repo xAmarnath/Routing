@@ -11,21 +11,34 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .gradient-overlay {
-            position: absolute;
-            background: linear-gradient(45deg, rgba(255, 0, 0, 0.7), rgba(0, 255, 0, 0.7), rgba(0, 0, 255, 0.7));
-            border: 2px solid #000;
-            /* Border color */
-            opacity: 0.8;
-            /* Adjust opacity of gradient */
-        }
+      position: absolute;
+      background: linear-gradient(45deg, rgba(255, 0, 0, 0.7), rgba(0, 255, 0, 0.7), rgba(0, 0, 255, 0.7));
+      border: 2px solid #000;
+      opacity: 0.8;
+      cursor: pointer; /* Makes it clear that it's interactive */
+    }
+
+    /* Tooltip styles */
+    .tooltip {
+      position: absolute;
+      padding: 5px 10px;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      border-radius: 5px;
+      white-space: nowrap;
+      display: none;
+      pointer-events: none;
+      z-index: 1000;
+    }
     </style>
 </head>
 
 <body class="bg-gray-900 text-white font-sans">
     <div>
-        <div class="z-10 mt-24 fixed top-0 left-0 p-4 bg-gray-900 bg-opacity-50">
+        <!-- <div class="z-10 mt-24 fixed top-0 left-0 p-4 bg-gray-900 bg-opacity-50">
             <p class="text-lg">Route Deviated: <span class="text-red-500 font-bold text-lg" id="deviated">No</span></p>
-        </div>
+        </div> -->
         <div id="map" class="h-screen"></div>
     </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjjIn17l-6uyNlZnjOEsZNnzoLGeIWCi0"></script>
@@ -38,7 +51,7 @@
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: 9.5209, lng: 76.3561 },
+                center: { lat: 19.02517, lng: 72.850294 },
                 zoom: 8
             });
 
@@ -54,11 +67,11 @@
                         }
 
                         const rectangle = new google.maps.Rectangle({
-                            strokeColor: "#FF0000", // Border color
-                            strokeOpacity: 1.0,    // Border opacity
-                            strokeWeight: 2,       // Border thickness
-                            fillColor: "#FF9999",  // Fill color (lighter than border)
-                            fillOpacity: 0.5,      // Fill opacity
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 1.0,
+                            strokeWeight: 2,
+                            fillColor: "#FF9999",
+                            fillOpacity: 0.5,
                             map: map,
                             bounds: bounds,
                         });

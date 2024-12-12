@@ -194,6 +194,7 @@ async def delete_rectangle(request):
         if rectangles[i][0] == lat and rectangles[i][1] == lon:
             rectangles.pop(i)
             break
+    
 
 app.router.add_get("/get_rectangles", get_rectangles)
 app.router.add_get("/delete_rectangle", delete_rectangle)
